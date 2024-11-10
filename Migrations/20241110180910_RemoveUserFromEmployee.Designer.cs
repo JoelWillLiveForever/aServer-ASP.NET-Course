@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using aServer_ASP.NET_Course.DbContexts;
@@ -11,9 +12,11 @@ using aServer_ASP.NET_Course.DbContexts;
 namespace aServer_ASP.NET_Course.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20241110180910_RemoveUserFromEmployee")]
+    partial class RemoveUserFromEmployee
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -55,7 +58,7 @@ namespace aServer_ASP.NET_Course.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("EmployeeId")
+                    b.Property<int>("EmployeeId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Title")
@@ -76,9 +79,6 @@ namespace aServer_ASP.NET_Course.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("BirthDate")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int?>("DepartmentId")
                         .HasColumnType("integer");
@@ -121,7 +121,7 @@ namespace aServer_ASP.NET_Course.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<int?>("EmployeeId")
+                    b.Property<int>("EmployeeId")
                         .HasColumnType("integer");
 
                     b.Property<int>("WorkedYears")
@@ -161,9 +161,13 @@ namespace aServer_ASP.NET_Course.Migrations
 
             modelBuilder.Entity("aServer_ASP.NET_Course.Models.Employees.Education", b =>
                 {
-                    b.HasOne("aServer_ASP.NET_Course.Models.Employees.Employee", null)
+                    b.HasOne("aServer_ASP.NET_Course.Models.Employees.Employee", "Employee")
                         .WithMany("Educations")
-                        .HasForeignKey("EmployeeId");
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("aServer_ASP.NET_Course.Models.Employees.Employee", b =>
@@ -175,9 +179,13 @@ namespace aServer_ASP.NET_Course.Migrations
 
             modelBuilder.Entity("aServer_ASP.NET_Course.Models.Employees.WorkExperience", b =>
                 {
-                    b.HasOne("aServer_ASP.NET_Course.Models.Employees.Employee", null)
+                    b.HasOne("aServer_ASP.NET_Course.Models.Employees.Employee", "Employee")
                         .WithMany("WorkExperience")
-                        .HasForeignKey("EmployeeId");
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("aServer_ASP.NET_Course.Models.Departments.Department", b =>

@@ -1,4 +1,5 @@
 ﻿using aServer_ASP.NET_Course.DbContexts;
+using aServer_ASP.NET_Course.Models.DTO;
 using aServer_ASP.NET_Course.Models.Users;
 using aServer_ASP.NET_Course.Utils;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,8 @@ using System.Security.Claims;
 
 namespace aServer_ASP.NET_Course.Controllers
 {
-    /*[ApiController]*/
+    [ApiController]
+    [Route("[controller]")]
     public class AuthController : ControllerBase
     {
         //private List<User> _users = new List<User>
@@ -27,23 +29,29 @@ namespace aServer_ASP.NET_Course.Controllers
         }
 
         [HttpPost("/register")]
-        public IActionResult Register(string username, string password)
+        public IActionResult Register([FromBody] RegisterRequestDto registerRequest)
         {
+            var user = _context.Users.FirstOrDefault(u => u.Login == registerRequest.Login);
+            if (user != null)
+            {
+                return BadRequest("User with this login already exist!");
+            }
+ 
             _context.Users.Add(new User
             {
-                Login = username,
-                Password = AuthUtils.HashPassword(password),
+                Login = registerRequest.Login,
+                Password = AuthUtils.HashPassword(registerRequest.Password),
                 Role = "user"
             });
 
-            var id = _context.SaveChanges();
-            return Ok(id);
+            _context.SaveChanges();
+            return Ok();
         }
 
         [HttpPost("/login")]
-        public IActionResult Login(string username, string password)
+        public IActionResult Login([FromBody] LoginRequestDto loginRequest)
         {
-            var identity = GetIdentity(username, password);
+            var identity = GetIdentity(loginRequest.Login, loginRequest.Password);
             if (identity == null)
             {
                 return BadRequest(new { errorText = "Invalid username or password!" });
@@ -76,11 +84,7 @@ namespace aServer_ASP.NET_Course.Controllers
             var user = _context.Users.FirstOrDefault(u => u.Login ==  username);
 
             // проверки
-            if (user == null)
-            {
-                return null;
-            }
-            if (!AuthUtils.VerifyPassword(password, user.Password))
+            if (user == null || !AuthUtils.VerifyPassword(password, user.Password))
             {
                 return null;
             }

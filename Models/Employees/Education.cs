@@ -10,6 +10,6 @@ namespace aServer_ASP.NET_Course.Models.Employees
         public int Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public Employee Employee { get; set; }
+        //public Employee Employee { get; set; }
     }
 }
