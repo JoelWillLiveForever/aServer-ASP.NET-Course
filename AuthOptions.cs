@@ -9,7 +9,7 @@ namespace aServer_ASP.NET_Course
         public const string AUDIENCE = "aReact_App_Client";
         public const string KEY = "8E1156D6-2F58-462E-9C94-B74971671AB7";
         
-        public const int LIFETIME = 1;
+        public const int LIFETIME = 400;
 
         public static SymmetricSecurityKey GetSymmetricSecurityKey()
         {

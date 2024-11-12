@@ -1,6 +1,7 @@
 ﻿using aServer_ASP.NET_Course.DbContexts;
 using aServer_ASP.NET_Course.Models.DTO;
 using aServer_ASP.NET_Course.Models.Employees;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,6 +9,7 @@ namespace aServer_ASP.NET_Course.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class EmployeesController : ControllerBase
     {
         private ApplicationContext _context;
@@ -18,12 +20,14 @@ namespace aServer_ASP.NET_Course.Controllers
         }
 
         [HttpGet("employees")]
+        [Authorize(Roles = "admin, manager")]
         public IEnumerable<Employee> GetEmployees()
         {
-            return _context.Employees.Include(e => e.WorkExperience).Include(e => e.Educations).ToList();
+            return _context.Employees.Include(e => e.WorkExperience).Include(e => e.Educations).Include(e => e.UserFiles).ToList();
         }
 
         [HttpPost("employee")]
+        [Authorize(Roles = "admin, manager")]
         public IActionResult CreateEmployee([FromBody] EmployeeRequestDto employeeDto)
         {
             var department = _context.Departments.Include(d => d.Employees)
@@ -56,6 +60,7 @@ namespace aServer_ASP.NET_Course.Controllers
         }
 
         [HttpPut("employee")]
+        [Authorize(Roles = "admin, manager")]
         public IActionResult UpdateEmployee([FromBody] Employee employee)
         {
             var _employee = _context.Employees.FirstOrDefault(e => e.Id == employee.Id);
@@ -75,6 +80,7 @@ namespace aServer_ASP.NET_Course.Controllers
         }
 
         [HttpDelete("employee")]
+        [Authorize(Roles = "admin, manager")]
         public IActionResult DeleteEmployee(int id)
         {
             var _employee = _context.Employees.FirstOrDefault(e => e.Id == id);
@@ -90,6 +96,7 @@ namespace aServer_ASP.NET_Course.Controllers
         }
 
         [HttpPost("workexperience")]
+        [Authorize(Roles = "admin, manager")]
         public IActionResult AddWorkExperience([FromBody]WorkExperienceRequestDto workExperience)
         {
             var _employee = _context.Employees.FirstOrDefault(e => e.Id == workExperience.EmployeeId);
@@ -114,6 +121,7 @@ namespace aServer_ASP.NET_Course.Controllers
         }
 
         [HttpDelete("workexperience")]
+        [Authorize(Roles = "admin, manager")]
         public IActionResult DeleteWorkExperiecne(int id)
         {
             var _workExperience = _context.WorkExperience.FirstOrDefault(we => we.Id == id);
@@ -129,6 +137,7 @@ namespace aServer_ASP.NET_Course.Controllers
         }
 
         [HttpPost("education")]
+        [Authorize(Roles = "admin, manager")]
         public IActionResult AddEducation([FromBody] EducationRequestDto education)
         {
             var _employee = _context.Employees.FirstOrDefault(e => e.Id == education.EmployeeId);
@@ -153,6 +162,7 @@ namespace aServer_ASP.NET_Course.Controllers
         }
 
         [HttpDelete("education")]
+        [Authorize(Roles = "admin, manager")]
         public IActionResult DeleteEducation(int id)
         {
             var _education = _context.Educations.FirstOrDefault(e => e.Id == id);

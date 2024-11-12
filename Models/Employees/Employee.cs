@@ -15,5 +15,6 @@ namespace aServer_ASP.NET_Course.Models.Employees
         //public User User { get; set; }
         public List<Education> Educations {  get; set; }
         public List<WorkExperience> WorkExperience { get; set; }
+        public List<UserFile> UserFiles { get; set; }
     }
 }
