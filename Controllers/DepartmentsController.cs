@@ -61,16 +61,31 @@ namespace aServer_ASP.NET_Course.Controllers
         [Authorize(Roles = "admin")]
         public IActionResult DeleteDepartment(int id)
         {
-            var department = _context.Departments.FirstOrDefault(d => d.Id == id);
-            if (department != null)
+            var department = _context.Departments.Include(d=>d.Employees).FirstOrDefault(d => d.Id == id);
+            if(department != null )
             {
+                while(department.Employees.Count > 0)
+                {
+                    _context.Employees.Remove(department.Employees.Last());
+                    _context.SaveChanges();
+                };
+                
                 _context.Departments.Remove(department);
                 _context.SaveChanges();
-
                 return Ok();
             }
+            return BadRequest("Department not found");
 
-            return BadRequest("Department not found!");
+            //var department = _context.Departments.FirstOrDefault(d => d.Id == id);
+            //if (department != null)
+            //{
+            //    _context.Departments.Remove(department);
+            //    _context.SaveChanges();
+
+            //    return Ok();
+            //}
+
+            //return BadRequest("Department not found!");
         }
     }
 }

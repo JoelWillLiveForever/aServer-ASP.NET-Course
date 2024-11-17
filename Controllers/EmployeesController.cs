@@ -39,7 +39,7 @@ namespace aServer_ASP.NET_Course.Controllers
 
                 var _employee = _context.Employees.Add(new Employee
                 {
-                    BirthDate = bd.ToString(),
+                    BirthDate = bd.ToString("yyyy-MM-dd"),
                     Email = employeeDto.Email,
                     FirstName = employeeDto.FirstName,
                     LastName = employeeDto.LastName,
@@ -72,7 +72,7 @@ namespace aServer_ASP.NET_Course.Controllers
                 var bd = DateTime.Now;
                 DateTime.TryParse(employee.BirthDate, out bd);
 
-                _employee.BirthDate = bd.ToString();
+                _employee.BirthDate = bd.ToString("yyyy-MM-dd");
                 _employee.Email = employee.Email;
                 _employee.FirstName = employee.FirstName;
                 _employee.LastName = employee.LastName;

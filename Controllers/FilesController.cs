@@ -84,26 +84,58 @@ namespace aServer_ASP.NET_Course.Controllers
             }
         }
 
-
-        [HttpPost("delete")]
+        [HttpDelete("delete")]
         [Authorize(Roles = "admin, manager")]
-        public IActionResult DeleteFile(string systemName)
+        public IActionResult DeleteFile(int id)
         {
             try
             {
-                var path = Path.Combine(Directory.GetCurrentDirectory(), FILES_DIRECTORY);
-                if (!Directory.Exists(path))
+                var file = _context.userFiles.FirstOrDefault(f => f.Id == id);
+                if (file != null)
                 {
-                    Directory.CreateDirectory(path);
-                }
+                    var systemName = file.SystemName;
+                    _context.userFiles.Remove(file);
+                    _context.SaveChanges();
 
-                System.IO.File.Delete(Path.Combine(path, systemName));
-                return Ok();
+                    var path = Path.Combine(Directory.GetCurrentDirectory(), FILES_DIRECTORY);
+                    if (!Directory.Exists(path))
+                    {
+                        return BadRequest("File not found in file system");
+                    }
+                    System.IO.File.Delete(Path.Combine(path, systemName));
+
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest("File not found in data base");
+                }
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
+
+        //[HttpPost("delete")]
+        //[Authorize(Roles = "admin, manager")]
+        //public IActionResult DeleteFile(string systemName)
+        //{
+        //    try
+        //    {
+        //        var path = Path.Combine(Directory.GetCurrentDirectory(), FILES_DIRECTORY);
+        //        if (!Directory.Exists(path))
+        //        {
+        //            Directory.CreateDirectory(path);
+        //        }
+
+        //        System.IO.File.Delete(Path.Combine(path, systemName));
+        //        return Ok();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //}
     }
 }
