@@ -16,7 +16,7 @@ namespace aServer_ASP.NET_Course.DbContexts
 
         public ApplicationContext() 
         {
-
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
